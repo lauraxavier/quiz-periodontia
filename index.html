@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Periodontia - Fibras do Ligamento Periodontal</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #16a34a;
+            --error: #dc2626;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-box {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 24px 0;
+        }
+
+        .option-item {
+            background: #f1f5f9;
+            border: 2px solid #e2e8f0;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .option-item:hover:not(:disabled) {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+
+        .option-item.correct {
+            background: #dcfce7;
+            border-color: var(--success);
+            color: #166534;
+        }
+
+        .option-item.incorrect {
+            background: #fee2e2;
+            border-color: var(--error);
+            color: #991b1b;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            margin-top: 16px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .results-container {
+            text-align: center;
+        }
+
+        .score-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div id="quiz-screen">
+            <h1>Quiz de Periodontia</h1>
+            <div class="subtitle">Fibras do Ligamento Periodontal</div>
+
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+
+            <div class="question-box" id="question-text">Carregando pergunta...</div>
+
+            <ul class="options-list" id="options-list"></ul>
+
+            <button id="next-btn" class="btn" disabled>Próxima Pergunta</button>
+            <div id="feedback" class="feedback"></div>
+        </div>
+
+        <div id="results-screen" class="results-container hidden">
+            <h1>Quiz Concluído! 🎉</h1>
+            <p>Você finalizou todas as perguntas sobre periodontia.</p>
+            <div class="score-display" id="score-text"></div>
+            <button class="btn" onclick="restartQuiz()">Refazer Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "1. Qual é a função principal das fibras oblíquas do ligamento periodontal?",
+                options: [
+                    "Resistir às forças mastigatórias verticais pesadas, suspendendo o dente",
+                    "Impedir o movimento de rotação do dente",
+                    "Proteger o ápice radicular contra forças de luxação",
+                    "Manter o contato interproximal entre dentes vizinhos"
+                ],
+                answer: 0
+            },
+            {
+                question: "2. Qual fibra do ligamento periodontal só existe em dentes com mais de uma raiz?",
+                options: [
+                    "Fibras apicais",
+                    "Fibras interradiculares",
+                    "Fibras crista-alveolares",
+                    "Fibras horizontais"
+                ],
+                answer: 1
+            },
+            {
+                question: "3. As fibras horizontais, onde elas se inserem?",
+                options: [
+                    "No cemento e no ápice do osso alveolar",
+                    "Em ângulos retos em relação ao longo eixo do dente, do cemetário ao osso alveolar",
+                    "Passando sobre a crista óssea interproximal",
+                    "Na região de furca entre as raízes"
+                ],
+                answer: 1
+            },
+            {
+                question: "4. As fibras apicais, o que elas protegem?",
+                options: [
+                    "Protegem contra forças laterais e torque",
+                    "Protegem os vasos sanguíneos e nervos que entram pelo forame apical contra forças de tração",
+                    "Protegem o tecido gengival marginal da impactação alimentar",
+                    "Protegem o cemento contra a reabsorção precoce"
+                ],
+                answer: 1
+            },
+            {
+                question: "5. As fibras transeptais, onde ficam?",
+                options: [
+                    "Estendem-se interproximalmente sobre a crista óssea alveolar, ligando o cimento de um dente ao dente vizinho",
+                    "Ao redor da base da raiz, formando um feixe circular",
+                    "Na região apical do dente",
+                    "Na crista alveolar principal"
+                ],
+                answer: 0
+            },
+            {
+                question: "6. As fibras circulares, o que elas fazem?",
+                options: [
+                    "Resistem às forças de intrusão",
+                    "Conectam o dente diretamente ao assoalho do seio maxilar",
+                    "Circundam o dente em forma de anel, mantendo a integridade da margem gengival livre",
+                    "Amortecem os impactos oclusais rápidos"
+                ],
+                answer: 2
+            },
+            {
+                question: "7. Qual é a única fibra (do grupo gengival/periodontal) que não se liga ao osso?",
+                options: [
+                    "Fibras oblíquas",
+                    "Fibras transeptais (conectam cemento de um dente ao cemento do dente vizinho)",
+                    "Fibras horizontais",
+                    "Fibras alveolares"
+                ],
+                answer: 1
+            },
+            {
+                question: "8. As fibras gengivais, pra onde elas vão?",
+                options: [
+                    "Do cimento radicular para os tecidos gengivais livres e aderidos, dando suporte à gengiva",
+                    "Diretamente para o interior do canal radicular",
+                    "Do osso alveolar alveolar para a polpa dentária",
+                    "Da polpa para o ligamento periodontal"
+                ],
+                answer: 0
+            },
+            {
+                question: "9. As fibras de Sharpey, o que são?",
+                options: [
+                    "Porções terminais das fibras colágenas do ligamento que se embebem no cemento e no osso alveolar",
+                    "Células especializadas na produção de saliva",
+                    "Fibras elásticas encontradas apenas na gengiva inserida",
+                    "Canais nervosos que cruzam o periodonto"
+                ],
+                answer: 0
+            },
+            {
+                question: "10. Qual fibra principal do ligamento periodontal aparece só em dentes com raiz única?",
+                options: [
+                    "Fibras apicais",
+                    "Fibras interradiculares (específicas de multirradiculares)",
+                    "Fibras oblíquas",
+                    "Fibras transversas"
+                ],
+                answer: 0
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        const questionText = document.getElementById("question-text");
+        const optionsList = document.getElementById("options-list");
+        const nextBtn = document.getElementById("next-btn");
+        const progress = document.getElementById("progress");
+        const feedback = document.getElementById("feedback");
+        const quizScreen = document.getElementById("quiz-screen");
+        const resultsScreen = document.getElementById("results-screen");
+        const scoreText = document.getElementById("score-text");
+
+        function loadQuestion() {
+            answered = false;
+            feedback.textContent = "";
+            nextBtn.disabled = true;
+
+            const q = questions[currentQuestion];
+            questionText.textContent = q.question;
+
+            progress.style.width = `${((currentQuestion) / questions.length) * 100}%`;
+
+            optionsList.innerHTML = "";
+            q.options.forEach((option, index) => {
+                const li = document.createElement("li");
+                li.className = "option-item";
+                li.textContent = option;
+                li.onclick = () => selectOption(index, li);
+                optionsList.appendChild(li);
+            });
+        }
+
+        function selectOption(selectedIndex, element) {
+            if (answered) return;
+            answered = true;
+
+            const q = questions[currentQuestion];
+            const options = optionsList.children;
+
+            if (selectedIndex === q.answer) {
+                element.classList.add("correct");
+                feedback.textContent = "Resposta Correta! 🎯";
+                feedback.style.color = "var(--success)";
+                score++;
+            } else {
+                element.classList.add("incorrect");
+                options[q.answer].classList.add("correct");
+                feedback.textContent = "Resposta Incorreta.";
+                feedback.style.color = "var(--error)";
+            }
+
+            Array.from(options).forEach(opt => opt.style.pointerEvents = "none");
+            nextBtn.disabled = false;
+        }
+
+        nextBtn.onclick = () => {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        };
+
+        function showResults() {
+            quizScreen.classList.add("hidden");
+            resultsScreen.classList.remove("hidden");
+            scoreText.textContent = `${score} / ${questions.length}`;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            resultsScreen.classList.add("hidden");
+            quizScreen.classList.remove("hidden");
+            loadQuestion();
+        }
+
+        loadQuestion();
+    </script>
+</body>
+
+</html>
