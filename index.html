@@ -91,7 +91,7 @@
             font-size: 0.95rem;
         }
 
-        .option-item:hover:not(:disabled) {
+        .option-item.hover:not(:disabled) {
             background: #e2e8f0;
             border-color: #cbd5e1;
         }
@@ -181,6 +181,7 @@
         </div>
     </div>
 
+    <audio id="audio-erro" src="error.ogg"></audio>
     <script>
         const questions = [
             {
@@ -297,6 +298,7 @@
         const quizScreen = document.getElementById("quiz-screen");
         const resultsScreen = document.getElementById("results-screen");
         const scoreText = document.getElementById("score-text");
+        const audioErro = document.getElementById("audio-erro"); // Referência ao áudio
 
         function loadQuestion() {
             answered = false;
@@ -335,6 +337,9 @@
                 options[q.answer].classList.add("correct");
                 feedback.textContent = "Resposta Incorreta.";
                 feedback.style.color = "var(--error)";
+
+                audioErro.currentTime = 0;
+                audioErro.play().catch(e => console.log("Erro ao reproduzir áudio:", e));
             }
 
             Array.from(options).forEach(opt => opt.style.pointerEvents = "none");
